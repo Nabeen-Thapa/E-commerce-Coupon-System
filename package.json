@@ -1,0 +1,22 @@
+{
+  "name": "coupon-system",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "pnpm": "^10.6.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}
