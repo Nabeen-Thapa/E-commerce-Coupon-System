@@ -1,7 +1,7 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 dotenv.config();
-export const smartConnection = new DataSource({
+export const couponConnection = new DataSource({
     type:"postgres",
     host : process.env.HOST ||"localhost",
     port: 5432,
@@ -14,7 +14,7 @@ export const smartConnection = new DataSource({
 })
 
 
-smartConnection.initialize()
+couponConnection.initialize()
   .then(() => {
     console.log("Database connected successfully!");
   })
