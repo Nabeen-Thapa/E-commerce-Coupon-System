@@ -3,7 +3,6 @@ import { addProductController } from "../controller/product.controller";
 
 const productRoutes:Router =  express.Router();
 
-productRoutes.post("product/add", addProductController);
-
+productRoutes.post("/product/add", addProductController);
 
 export default productRoutes;

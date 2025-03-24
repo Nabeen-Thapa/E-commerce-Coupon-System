@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.ts"
+    "app": "nodemon src/app.ts"
   },
   "keywords": [],
   "author": "",
@@ -12,17 +12,24 @@
   "description": "",
   "dependencies": {
     "@types/dotenv": "^8.2.3",
-    "@types/express": "^5.0.1",
     "@types/typescript": "^2.0.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "http-status-codes": "^2.3.0",
     "nodemon": "^3.1.9",
     "pg": "^8.14.1",
+    "pg-hstore": "^2.3.4",
     "pnpm": "^10.6.5",
+    "ts-node": "^10.9.2",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/ioredis": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.11",
+    "@types/pg": "^8.11.11",
     "typescript": "^5.8.2"
   }
 }

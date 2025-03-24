@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
+import { product } from "../models/product.model";
 dotenv.config();
 export const couponConnection = new DataSource({
     type:"postgres",
@@ -7,10 +8,10 @@ export const couponConnection = new DataSource({
     port: 5432,
     username :"postgres",
     password : process.env.password ||"Nt@post",
-    database : process.env.database,
+    database : process.env.database || "CouponSystem",
     synchronize: true,
     logging: false,
-    entities : [],
+    entities : [product],
 })
 
 

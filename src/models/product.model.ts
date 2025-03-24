@@ -12,6 +12,5 @@ export class product extends commonModel {
     price!: number;
 
     @Column({ default: true })
-    isAvailable!: boolean;
-    
+    isAvailable!: boolean; 
 }
