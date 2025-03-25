@@ -1,5 +1,7 @@
 import express from "express";
-import productRoutes from "./routers/product.routes";
+import couponRoutes from "./routers/coupon.routes";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
@@ -7,10 +9,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
-app.use("/api",productRoutes);
+app.use("/api",couponRoutes);
 
 
-const port = 4400;
+const port =process.env.PORT || 3450;
 app.listen(port, ()=>{
     console.log(`server is running in ${port}`);
 })

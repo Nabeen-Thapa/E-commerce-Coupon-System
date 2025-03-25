@@ -1,6 +1,10 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
-import { product } from "../models/product.model";
+import { Product } from "../models/product.model";
+import { Cart } from "../models/cart.model";
+import { User } from "../models/User.model";
+import { CartItem } from "../models/cartItem.model";
+import { Coupon } from "../models/coupon.model";
 dotenv.config();
 export const couponConnection = new DataSource({
     type:"postgres",
@@ -11,7 +15,7 @@ export const couponConnection = new DataSource({
     database : process.env.database || "CouponSystem",
     synchronize: true,
     logging: false,
-    entities : [product],
+    entities : [Product, Cart, User, CartItem, Coupon],
 })
 
 

@@ -1,12 +1,12 @@
 import { couponConnection } from "../dbconfig/dbConfig";
-import { product } from "../models/product.model";
+import { Product } from "../models/product.model";
 
 export const addProduct =async(productName:string, price:number, isAvailable:boolean)=>{
     if(!productName || !price || !isAvailable){
      throw new Error("all fields are needed");
     }
     try {
-        const getProductRepo = couponConnection.getRepository(product);
+        const getProductRepo = couponConnection.getRepository(Product);
         // const isProductNameExist = await getProductRepo.find({where: {productName}});
         // if(isProductNameExist){
         //     throw new Error("product with this us already exist")

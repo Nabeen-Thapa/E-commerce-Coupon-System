@@ -6,8 +6,8 @@ export class commonModel{
     id!:number;
 
    @CreateDateColumn()
-    createdAt!:Date;
+    createdAt?:Date;
 
    @UpdateDateColumn()
-   updateAt!:Date;
+   updateAt?:Date;
 }
