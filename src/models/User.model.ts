@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany } from "typeorm";
 import { commonModel } from "./common.modals";
 import { Cart } from "./cart.model";
+import { Order } from "./order.model";
 
 @Entity("Users")
 export class User extends commonModel{
@@ -15,4 +16,7 @@ export class User extends commonModel{
 
     @OneToMany(() => Cart, (cart) => cart.user) 
     carts!: Cart[];
+
+    @OneToMany(()=> Order, (order)=>order.user)
+    orders!: Order[];
 }
