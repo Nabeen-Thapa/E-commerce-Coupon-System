@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { commonModel } from "./common.modals";
 import { DiscountType } from "../types/discount.type";
+import { CouponRedemption } from "./CouponRedemption";
 
 
 @Entity()
@@ -37,5 +38,8 @@ export class Coupon extends commonModel {
 
     @Column({ default: 1 })
     usagePerUser!: number;
+
+    @OneToMany(() => CouponRedemption, (redemption) => redemption.coupon)
+    redemptions!: CouponRedemption[];
 
 }
