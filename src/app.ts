@@ -12,7 +12,7 @@ app.use(express.json());
 app.use("/api",couponRoutes);
 
 
-const port =process.env.PORT || 3450;
+const port =process.env.PORT || 3400;
 app.listen(port, ()=>{
     console.log(`server is running in ${port}`);
 })

@@ -3,29 +3,31 @@ import { couponConnection } from "../dbconfig/dbConfig";
 import { Coupon } from "../models/coupon.model";
 import { CouponRestriction } from "../models/CouponRestriction.model";
 
-export const addCouponRestriction = async (couponId, allowUserRoles, allowPaymentMethods, excludedProductId, excludedCategoryIds) => {
+export const addCouponRestriction = async (couponId: number, allowUserRoles: string, allowPaymentMethods: string, excludedProductId: string, excludedCategoryIds: string) => {
     try {
-       
+        const couponRepo = couponConnection.getRepository(Coupon);
+        const restrictionRepo = couponConnection.getRepository(CouponRestriction);
 
-        const getCoupon = await couponConnection.getRepository(Coupon).findOne({ where: { id: couponId } });
+        // Step 1: Get the Coupon entity using the couponId
+        const getCoupon = await couponRepo.findOne({ where: { id: couponId } });
 
         if (!getCoupon) {
             throw new Error("Coupon not found");
         }
 
-        // Create new CouponRestriction entry
-        const newRestriction = new CouponRestriction();
-        newRestriction.coupon = getCoupon;
-        newRestriction.allowUserRoles = allowUserRoles || null;
-        newRestriction.allowPymentMethods = allowPaymentMethods || null;
-        newRestriction.excludedProductId = excludedProductId || null;
-        newRestriction.excludedCategoryIds = excludedCategoryIds || null;
+        const newRestriction = restrictionRepo.create({
+            coupon: getCoupon,
+            allowUserRoles,
+            allowPaymentMethods: allowPaymentMethods || null,
+            excludedProductId: excludedProductId || null,
+            excludedCategoryIds: excludedCategoryIds || null
+        } as Partial<CouponRestriction>);
 
-        await couponConnection.getRepository(CouponRestriction).save(newRestriction);
+        await restrictionRepo.save(newRestriction);
 
         return { message: "Coupon restriction added successfully", restriction: newRestriction };
     } catch (error) {
         console.error(error);
-      throw new Error("Internal Server Error" );
+        throw new Error("Internal Server Error");
     }
 };
