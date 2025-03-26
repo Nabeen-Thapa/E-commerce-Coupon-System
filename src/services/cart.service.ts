@@ -56,7 +56,7 @@ export const addToCart = async(userId: number, productId :number, quantity:numbe
         getCart.totalAmount = getCart.items.reduce((sum, item) => sum + item.totalPrice, 0);
         getCart.finalAmount = getCart.totalAmount - (getCart.discountAmount?? 0);
 
-        // ✅ Fixed references
+        // Fixed references
         await couponConnection.getRepository(Cart).save(getCart);
         await couponConnection.getRepository(CartItem).save(cartItem);
 

@@ -11,11 +11,12 @@ export const addToCartController = async (req: Request, res: Response): Promise<
             return;
         }
 
-        await addToCart(userId, productId, quantity);
+       const addToCartResult = await addToCart(userId, productId, quantity);
 
-        res.status(StatusCodes.OK).json({ message: "Product added to cart" });
-        return;
+        res.status(StatusCodes.OK).json({ message: "Product added to cart",
+            data : addToCartResult
+         });
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Something went wrong" });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
     }
 };

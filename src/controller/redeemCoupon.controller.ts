@@ -17,5 +17,6 @@ export const RedeemCouponController = async (req:Request, res:Response):Promise<
         return;
     } catch (error) {
         console.log("error in redeemCoupon controller");
+        res.status(StatusCodes.BAD_REQUEST).json({ message: error});
     }
 }
