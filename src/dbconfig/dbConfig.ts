@@ -7,6 +7,7 @@ import { CartItem } from "../models/cartItem.model";
 import { Coupon } from "../models/coupon.model";
 import { CouponRedemption } from "../models/CouponRedemption";
 import { CouponRestriction } from "../models/CouponRestriction.model";
+import { Order } from "../models/order.model";
 dotenv.config();
 export const couponConnection = new DataSource({
     type:"postgres",
@@ -17,7 +18,7 @@ export const couponConnection = new DataSource({
     database : process.env.database || "CouponSystem",
     synchronize: true,
     logging: false,
-    entities : [Product, Cart, User, CartItem, Coupon, CouponRedemption, CouponRestriction],
+    entities : [Product, Cart, User, CartItem, Coupon, CouponRedemption, CouponRestriction, Order],
 })
 
 

@@ -29,6 +29,9 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         if (userRedemptions >= getCoupon.usagePerUser) {
             throw new Error("Coupon usage limit exceeded for this user");
         }
+        if (getCoupon.totalRedeemption >= getCoupon.usageLimit) {
+            throw new Error("This coupon has reached its maximum redemption limit");
+        }
 
         // Step 4: Check if the order amount meets the minimum purchase requirement
         if (getCoupon.minPurchaseAmount && orderAmount < getCoupon.minPurchaseAmount) {
@@ -45,6 +48,11 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         } else if (getCoupon.discountType === "fixed") {
             discountApplied = getCoupon.discountValue;
         }
+
+       
+
+       
+        
 
         // Step 6: Save Coupon Redemption Entry
         const newRedemption = redemptionRepo.create({

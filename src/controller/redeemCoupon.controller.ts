@@ -2,19 +2,19 @@ import { Request, Response } from "express";
 import { RedeemCoupon } from "../services/redeemCoupon.service";
 import { StatusCodes } from "http-status-codes";
 
-const RedeemCouponController = async (req:Request, res:Response):Promise<void> =>{
-    const { userId, couponId, orderId, discountApplied } = req.body;
+export const RedeemCouponController = async (req:Request, res:Response):Promise<void> =>{
+    const { userId, couponId, orderId, discountAppliedAmount } = req.body;
     try {
-        if (!userId || !couponId || !orderId || discountApplied === undefined) {
+        if (!userId || !couponId || !orderId || discountAppliedAmount === undefined) {
             res.status(400).json({ message: "Invalid request data" });
             return;
         }
-        const RedeemCouponResult = await RedeemCoupon(userId, couponId, orderId, discountApplied);
+        const RedeemCouponResult = await RedeemCoupon(userId, couponId, orderId, discountAppliedAmount);
         res.status(StatusCodes.OK).json({
             message : "redeemed success",
             data: RedeemCouponResult
         })
-        
+        return;
     } catch (error) {
         console.log("error in redeemCoupon controller");
     }
