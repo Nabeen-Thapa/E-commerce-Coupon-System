@@ -1,13 +1,15 @@
-import { Column, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 import { commonModel } from "./common.modals";
 import { Coupon } from "./coupon.model";
+import { userType } from "../types/userTypes.type";
 
+@Entity("copuonRestriction")
 export class CouponRestriction extends commonModel {
   @ManyToOne(() => Coupon)
   coupon!: Coupon;
 
-  @Column({ nullable: true })
-  allowUserRoles!: string; //new user, old users , premimun
+  @Column({type: "enum", enum:userType, default:userType.NORMAL_USER})
+  allowUserRoles!: userType; //new user, old users , premimun
 
   @Column({ nullable: true })
   allowPaymentMethods!: string; 

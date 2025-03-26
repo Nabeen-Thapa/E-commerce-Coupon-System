@@ -3,7 +3,6 @@ import { commonModel } from "./common.modals";
 
 @Entity("products")
 @Unique(["id"])
-
 export class Product extends commonModel {
     @Column()
     productName!: string;

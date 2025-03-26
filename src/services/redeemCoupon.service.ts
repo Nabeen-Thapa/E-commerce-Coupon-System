@@ -1,6 +1,8 @@
+import { subDays } from "date-fns";
 import { couponConnection } from "../dbconfig/dbConfig";
 import { Coupon } from "../models/coupon.model";
 import { CouponRedemption } from "../models/CouponRedemption";
+import { CouponRestriction } from "../models/CouponRestriction.model";
 import { User } from "../models/User.model";
 
 export const RedeemCoupon = async (userId: number, couponId: number, orderId: number, orderAmount: number) => {
@@ -8,22 +10,37 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         const userRepo = couponConnection.getRepository(User);
         const couponRepo = couponConnection.getRepository(Coupon);
         const redemptionRepo = couponConnection.getRepository(CouponRedemption);
+        const restrictionRepo = couponConnection.getRepository(CouponRestriction);
 
-        // Step 1: Find User & Coupon
+        //Find User & Coupon
         const getUser = await userRepo.findOne({ where: { id: userId } });
         const getCoupon = await couponRepo.findOne({ where: { id: couponId } });
-
+       const getRestrictionUserType = await restrictionRepo.findOne({where:{coupon: {id: couponId}}})
         if (!getUser || !getCoupon) {
             throw new Error("User or Coupon not found");
         }
 
-        // Step 2: Check if the coupon is active and within the valid date range
+        //ckeck which user type is allow to use coupon (check by user registerd/created date)
+        if(getRestrictionUserType?.allowUserRoles === "new user"){
+            const sevenDaysAgo = subDays(new Date(), 7);
+            if(getUser?.createdAt < sevenDaysAgo ){
+                throw new Error ("this coupon is only for new users");
+            }
+        }
+        if(getRestrictionUserType?.allowUserRoles === "old user"){
+            const sevenDaysAgo = subDays(new Date(), 7);
+            if(getUser?.createdAt > sevenDaysAgo ){
+                throw new Error ("this coupon is only for old users");
+            }
+        }
+
+        //  Check if the coupon is active and within the valid date range
         const now = new Date();
         if (!getCoupon.isActive || now < getCoupon.validFrom || now > getCoupon.validUntil) {
             throw new Error("Coupon is expired or inactive");
         }
 
-        // Step 3: Check if the user has already redeemed the coupon max times
+        //Check if the user has already redeemed the coupon max times
         const userRedemptions = await redemptionRepo.count({ where: { user: getUser, coupon: getCoupon } });
 
         if (userRedemptions >= getCoupon.usagePerUser) {
@@ -33,12 +50,12 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
             throw new Error("This coupon has reached its maximum redemption limit");
         }
 
-        // Step 4: Check if the order amount meets the minimum purchase requirement
+        //Check if the order amount meets the minimum purchase requirement
         if (getCoupon.minPurchaseAmount && orderAmount < getCoupon.minPurchaseAmount) {
             throw new Error(`Minimum order amount should be ${getCoupon.minPurchaseAmount}`);
         }
 
-        // Step 5: Calculate Discount
+        //Calculate Discount
         let discountApplied = 0;
         if (getCoupon.discountType === "percentage") {
             discountApplied = (orderAmount * getCoupon.discountValue) / 100;
@@ -49,12 +66,7 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
             discountApplied = getCoupon.discountValue;
         }
 
-       
-
-       
-        
-
-        // Step 6: Save Coupon Redemption Entry
+        //Save Coupon Redemption Entry
         const newRedemption = redemptionRepo.create({
             user: getUser,
             coupon: getCoupon,
@@ -63,7 +75,7 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         });
         await redemptionRepo.save(newRedemption);
 
-        // Step 7: Increase Coupon Redemption Count
+        //Increase Coupon Redemption Count
         getCoupon.totalRedeemption += 1;
         await couponRepo.save(getCoupon);
 

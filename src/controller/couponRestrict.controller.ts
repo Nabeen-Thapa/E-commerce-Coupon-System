@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { addCouponRestriction } from "../services/couponRestriction.service";
 import { StatusCodes } from "http-status-codes";
 
-const CouponRestrictionController = async(req:Request, res:Response):Promise<void> =>{
+export const CouponRestrictionController = async(req:Request, res:Response):Promise<void> =>{
      const { couponId, allowUserRoles, allowPaymentMethods, excludedProductId, excludedCategoryIds } = req.body;
             if (!couponId) {
                 res.status(400).json({ message: "Coupon ID is required" });
