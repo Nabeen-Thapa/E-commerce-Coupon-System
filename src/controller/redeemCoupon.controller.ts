@@ -3,13 +3,14 @@ import { RedeemCoupon } from "../services/redeemCoupon.service";
 import { StatusCodes } from "http-status-codes";
 
 export const RedeemCouponController = async (req:Request, res:Response):Promise<void> =>{
-    const { userId, couponId, orderId, discountAppliedAmount } = req.body;
+    const { userId, couponId, orderId , discountOnId = null } = req.body;
     try {
-        if (!userId || !couponId || !orderId || discountAppliedAmount === undefined) {
+        if (!userId || !couponId || !orderId) {
             res.status(400).json({ message: "Invalid request data" });
             return;
         }
-        const RedeemCouponResult = await RedeemCoupon(userId, couponId, orderId, discountAppliedAmount);
+       
+        const RedeemCouponResult = await RedeemCoupon(userId, couponId, orderId, discountOnId);
         res.status(StatusCodes.OK).json({
             message : "redeemed success",
             data: RedeemCouponResult

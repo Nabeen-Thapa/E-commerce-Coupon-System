@@ -3,7 +3,10 @@ import { couponConnection } from "../dbconfig/dbConfig";
 import { Coupon } from "../models/coupon.model";
 import { CouponRestriction } from "../models/CouponRestriction.model";
 
-export const addCouponRestriction = async (couponId: number, allowUserRoles: string, allowPaymentMethods: string, excludedProductId: string, excludedCategoryIds: string) => {
+export const addCouponRestriction = async (couponId: number, allowUserRoles: string, allowPaymentMethods: string, discountOn:string, discountOnId : number) => {
+
+    //instade of these use discount on
+    // excludedProductId: string, excludedCategoryIds: string
     try {
         const couponRepo = couponConnection.getRepository(Coupon);
         const restrictionRepo = couponConnection.getRepository(CouponRestriction);
@@ -19,8 +22,10 @@ export const addCouponRestriction = async (couponId: number, allowUserRoles: str
             coupon: getCoupon,
             allowUserRoles,
             allowPaymentMethods: allowPaymentMethods || null,
-            excludedProductId: excludedProductId || null,
-            excludedCategoryIds: excludedCategoryIds || null
+            discountOn: discountOn || null,
+            discountOnId:discountOnId ||null
+            // excludedProductId: excludedProductId || null,
+            // excludedCategoryIds: excludedCategoryIds || null
         } as Partial<CouponRestriction>);
 
         await restrictionRepo.save(newRestriction);

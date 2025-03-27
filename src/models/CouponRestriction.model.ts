@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne } from "typeorm";
 import { commonModel } from "./common.modals";
 import { Coupon } from "./coupon.model";
 import { userType } from "../types/userTypes.type";
+import { discountOn } from "../types/discount.type";
 
 @Entity("copuonRestriction")
 export class CouponRestriction extends commonModel {
@@ -14,9 +15,15 @@ export class CouponRestriction extends commonModel {
   @Column({ nullable: true })
   allowPaymentMethods!: string; 
 
-  @Column({ nullable: true })
-  excludedProductId!: string;
+    @Column({nullable:true,type:"enum", enum:discountOn, default:discountOn.PRODUCT})
+    discountOn!:discountOn;
 
-  @Column({ nullable: true })
-  excludedCategoryIds!: string;
+    @Column({nullable:true})
+    discountOnId?:number;
+    
+  // @Column({ nullable: true })
+  // excludedProductId!: string;
+
+  // @Column({ nullable: true })
+  // excludedCategoryIds!: string;
 }

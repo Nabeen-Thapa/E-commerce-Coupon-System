@@ -4,33 +4,74 @@ import { Coupon } from "../models/coupon.model";
 import { CouponRedemption } from "../models/CouponRedemption";
 import { CouponRestriction } from "../models/CouponRestriction.model";
 import { User } from "../models/User.model";
+import { Order } from "../models/order.model";
+import { Product } from "../models/product.model";
+import { Cart } from "../models/cart.model";
 
-export const RedeemCoupon = async (userId: number, couponId: number, orderId: number, orderAmount: number) => {
+export const RedeemCoupon = async (userId: number, couponId: number, orderId: number, discountOnId: number) => {
     try {
         const userRepo = couponConnection.getRepository(User);
         const couponRepo = couponConnection.getRepository(Coupon);
         const redemptionRepo = couponConnection.getRepository(CouponRedemption);
         const restrictionRepo = couponConnection.getRepository(CouponRestriction);
+        const orderRepo = couponConnection.getRepository(Order);
+        const productRepo = couponConnection.getRepository(Product);
+        const cartRepo = couponConnection.getRepository(Cart);
+        //const categoryRepo = couponConnection.getRepository(Category);
 
-        //Find User & Coupon
+        const getOrder = await orderRepo.findOne({ where: { id: orderId } })
         const getUser = await userRepo.findOne({ where: { id: userId } });
         const getCoupon = await couponRepo.findOne({ where: { id: couponId } });
-       const getRestrictionUserType = await restrictionRepo.findOne({where:{coupon: {id: couponId}}})
+        if (!getOrder) {
+            throw new Error("order not fuond")
+        }
+        let orderAmount = getOrder?.totalAmount;
+        const getRestrictionUserType = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } })
         if (!getUser || !getCoupon) {
             throw new Error("User or Coupon not found");
         }
-
-        //ckeck which user type is allow to use coupon (check by user registerd/created date)
-        if(getRestrictionUserType?.allowUserRoles === "new user"){
-            const sevenDaysAgo = subDays(new Date(), 7);
-            if(getUser?.createdAt < sevenDaysAgo ){
-                throw new Error ("this coupon is only for new users");
+        if (!restrictionRepo) {
+            throw new Error("coupon redemption not found");
+        }
+        //check the coupon is for what for prescific product, or category or for all
+        const getRestriction = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } });
+        let getDiscoutOnId = 0;
+        if (getRestriction?.discountOn === "product") {
+            const product = await productRepo.findOne({ where: { id: discountOnId } });
+            if (!product) {
+                throw new Error("Product not found for the given discountOnId");
+            }
+            getDiscoutOnId = product.id;
+            if (!getDiscoutOnId) {
+                throw new Error("the coupon discount is not for this porduct");
             }
         }
-        if(getRestrictionUserType?.allowUserRoles === "old user"){
+        // let getDiscoutOnId = (getRestriction?.discountOn === "product") ? ((await productRepo.findOne({ where: { id: discountOnId } }))) :" ";
+
+
+        //if category exist
+        // if(restrictionRepo?.discountOn === "category" ){
+        //      const category = await category.findOne({where:{id:discountOnId}})
+        // if (!category) {
+        //     throw new Error("category not found for the given discountOnId");
+        // }
+        // getDiscoutOnId = category.id;
+        // if (!getDiscoutOnId) {
+        //     throw new Error("the coupon discount is not for this porduct");
+        // }
+        // }
+
+        //ckeck which user type is allow to use coupon (check by user registerd/created date)
+        if (getRestrictionUserType?.allowUserRoles === "new user") {
             const sevenDaysAgo = subDays(new Date(), 7);
-            if(getUser?.createdAt > sevenDaysAgo ){
-                throw new Error ("this coupon is only for old users");
+            if (getUser?.createdAt < sevenDaysAgo) {
+                throw new Error("this coupon is only for new users");
+            }
+        }
+        if (getRestrictionUserType?.allowUserRoles === "old user") {
+            const sevenDaysAgo = subDays(new Date(), 7);
+            if (getUser?.createdAt > sevenDaysAgo) {
+                throw new Error("this coupon is only for old users");
             }
         }
 
@@ -58,12 +99,12 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         //Calculate Discount
         let discountApplied = 0;
         if (getCoupon.discountType === "percentage") {
-            discountApplied = (orderAmount * getCoupon.discountValue) / 100;
+            discountApplied = await (orderAmount * getCoupon.discountValue) / 100;
             if (getCoupon.maxDiscountAmount) {
-                discountApplied = Math.min(discountApplied, getCoupon.maxDiscountAmount);
+                discountApplied = await Math.min(discountApplied, getCoupon.maxDiscountAmount);
             }
         } else if (getCoupon.discountType === "fixed") {
-            discountApplied = getCoupon.discountValue;
+            discountApplied = await Math.round(getCoupon.discountValue);
         }
 
         //Save Coupon Redemption Entry
@@ -75,6 +116,14 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         });
         await redemptionRepo.save(newRedemption);
 
+        //reduce the total final anount by discount appiled amount
+        const getCart = await cartRepo.findOne({where :{user: {id : userId}}})
+        let getCartFinalAmoount = getCart?.finalAmount ?? 0;
+        getCartFinalAmoount =getCartFinalAmoount- discountApplied;
+        const NewTotalAmount =  cartRepo.create({
+            finalAmount :getCartFinalAmoount
+   })
+        await cartRepo.save(NewTotalAmount);
         //Increase Coupon Redemption Count
         getCoupon.totalRedeemption += 1;
         await couponRepo.save(getCoupon);
