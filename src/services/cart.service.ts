@@ -51,14 +51,7 @@ export const addToCart = async (userId: number, productId: number, quantity: num
         }
 
         // Calculate total cart amounts
-         getCart.totalAmount = getCart.items.reduce((sum, item) => sum + (item.totalPrice), 0);
-        // getCart.finalAmount = getCart.totalAmount - (getCart.discountAmount ?? 0);
-
-        // // Fixed references
-        // console.log("Total Amount before saving:", getCart.totalAmount);
-        // console.log("Final Amount before saving:", getCart.finalAmount);
-
-        //transaction helps to save in both talble if any one is failed both data in both wiill not saved
+        getCart.totalAmount = Number(getCart.items.reduce((sum, item) => sum + Number(item.totalPrice), 0));
         await couponConnection.transaction(async (manager) => {
             await manager.getRepository(CartItem).save(cartItem);
             await manager.getRepository(Cart).save(getCart);
