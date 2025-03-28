@@ -31,7 +31,7 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         if (!restrictionRepo) {
             throw new Error("coupon redemption not found");
         }
-       
+
         //check the coupon is for what for prescific product, or category or for all
         const getRestriction = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } });
         let getDiscoutOnId = 0;
@@ -100,12 +100,12 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         //Calculate Discount
         let discountApplied = 0;
         if (getCoupon.discountType === "percentage") {
-            discountApplied =  (orderAmount * getCoupon.discountValue) / 100;
+            discountApplied = (orderAmount * getCoupon.discountValue) / 100;
             if (getCoupon.maxDiscountAmount) {
-                discountApplied =  Math.min(discountApplied, getCoupon.maxDiscountAmount);
+                discountApplied = Math.min(discountApplied, getCoupon.maxDiscountAmount);
             }
         } else if (getCoupon.discountType === "fixed") {
-            discountApplied =  Math.round(getCoupon.discountValue);
+            discountApplied = Math.round(getCoupon.discountValue);
         }
 
         //Save Coupon Redemption Entry
@@ -118,13 +118,24 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         await redemptionRepo.save(newRedemption);
 
         //reduce the total final anount by discount appiled amount
-        const getorderedAmount = await orderRepo.findOne({where :{user: {id : userId}}})
-        let getOrderFinalAmoount = getorderedAmount?.totalAmount ?? 0;
-        getOrderFinalAmoount =getOrderFinalAmoount- discountApplied;
-        const NewTotalAmount =  cartRepo.create({
-            finalAmount :getOrderFinalAmoount
-   })
-        await orderRepo.save(NewTotalAmount);
+        const getorderedAmount = await orderRepo.findOne({
+            where: { id: orderId } 
+        });
+        
+        if (!getorderedAmount) {
+            throw new Error("Order not found for the given userId");
+        }
+        
+        // Convert decimal to number
+        let getOrderFinalAmount = Math.round(Number(getorderedAmount.totalAmount ?? 0));
+        console.log("get order amount:", getOrderFinalAmount);
+        
+        const newOrderFinalAmount = Math.round(getOrderFinalAmount - discountApplied);
+        await orderRepo.update(
+            { id: orderId },
+            { totalAmount: newOrderFinalAmount }
+        );
+        
         //Increase Coupon Redemption Count
         getCoupon.totalRedeemption += 1;
         await couponRepo.save(getCoupon);

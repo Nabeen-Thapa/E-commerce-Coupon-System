@@ -8,8 +8,9 @@ export class Order extends commonModel{
     @ManyToOne(()=>User, (user)=>user.orders)
     user!:User;
 
-    @Column("decimal", { precision: 10, scale: 2 })
+    @Column("decimal", { precision: 10, scale: 2, default: 0 })
     totalAmount!: number;
+    
 
     @Column({type: "enum", enum:orderStatus, default:orderStatus.PENDING}) 
     status!: orderStatus;

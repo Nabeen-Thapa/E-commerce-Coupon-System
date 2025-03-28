@@ -15,7 +15,7 @@ export const createOrder = async(userId: number)=>{
             throw new Error("user is not exist");
         } 
         const getCartTotalAmount =  await cartRepo.findOne({where: {user: {id: userId}}})
-        const totalAmount = getCartTotalAmount?.finalAmount;
+        const totalAmount = getCartTotalAmount?.totalAmount;
         const newOrder = orderRepo.create({user: isUserExist, totalAmount });
         await orderRepo.save(newOrder);
         return { message: "Order created successfully", order: newOrder };

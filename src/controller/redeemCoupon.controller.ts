@@ -9,7 +9,6 @@ export const RedeemCouponController = async (req:Request, res:Response):Promise<
             res.status(400).json({ message: "Invalid request data" });
             return;
         }
-       
         const RedeemCouponResult = await RedeemCoupon(userId, couponId, orderId, discountOnId);
         res.status(StatusCodes.OK).json({
             message : "redeemed success",
