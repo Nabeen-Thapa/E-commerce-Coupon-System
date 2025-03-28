@@ -16,8 +16,5 @@ export class Cart extends commonModel {
     totalAmount!: number;
 
     @Column("decimal", { precision: 10, scale: 2, default: 0 })
-    discountAmount?: number;
-
-    @Column("decimal", { precision: 10, scale: 2, default: 0 })
     finalAmount!: number;
 }

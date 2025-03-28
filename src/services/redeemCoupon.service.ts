@@ -25,14 +25,13 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         if (!getOrder) {
             throw new Error("order not fuond")
         }
-        let orderAmount = getOrder?.totalAmount;
-        const getRestrictionUserType = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } })
         if (!getUser || !getCoupon) {
             throw new Error("User or Coupon not found");
         }
         if (!restrictionRepo) {
             throw new Error("coupon redemption not found");
         }
+       
         //check the coupon is for what for prescific product, or category or for all
         const getRestriction = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } });
         let getDiscoutOnId = 0;
@@ -49,19 +48,21 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         // let getDiscoutOnId = (getRestriction?.discountOn === "product") ? ((await productRepo.findOne({ where: { id: discountOnId } }))) :" ";
 
 
-        //if category exist
-        // if(restrictionRepo?.discountOn === "category" ){
-        //      const category = await category.findOne({where:{id:discountOnId}})
-        // if (!category) {
-        //     throw new Error("category not found for the given discountOnId");
-        // }
-        // getDiscoutOnId = category.id;
-        // if (!getDiscoutOnId) {
-        //     throw new Error("the coupon discount is not for this porduct");
-        // }
+        //if category exist (corrnetly category is not exist in my project)
+        // if (restrictionRepo?.discountOn === "category") {
+        //     const category = await category.findOne({ where: { id: discountOnId } })
+        //     if (!category) {
+        //         throw new Error("category not found for the given discountOnId");
+        //     }
+        //     getDiscoutOnId = category.id;
+        //     if (!getDiscoutOnId) {
+        //         throw new Error("the coupon discount is not for this porduct");
+        //     }
         // }
 
+
         //ckeck which user type is allow to use coupon (check by user registerd/created date)
+        const getRestrictionUserType = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } })
         if (getRestrictionUserType?.allowUserRoles === "new user") {
             const sevenDaysAgo = subDays(new Date(), 7);
             if (getUser?.createdAt < sevenDaysAgo) {
@@ -90,7 +91,7 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         if (getCoupon.totalRedeemption >= getCoupon.usageLimit) {
             throw new Error("This coupon has reached its maximum redemption limit");
         }
-
+        let orderAmount = getOrder?.totalAmount;
         //Check if the order amount meets the minimum purchase requirement
         if (getCoupon.minPurchaseAmount && orderAmount < getCoupon.minPurchaseAmount) {
             throw new Error(`Minimum order amount should be ${getCoupon.minPurchaseAmount}`);
@@ -99,12 +100,12 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         //Calculate Discount
         let discountApplied = 0;
         if (getCoupon.discountType === "percentage") {
-            discountApplied = await (orderAmount * getCoupon.discountValue) / 100;
+            discountApplied =  (orderAmount * getCoupon.discountValue) / 100;
             if (getCoupon.maxDiscountAmount) {
-                discountApplied = await Math.min(discountApplied, getCoupon.maxDiscountAmount);
+                discountApplied =  Math.min(discountApplied, getCoupon.maxDiscountAmount);
             }
         } else if (getCoupon.discountType === "fixed") {
-            discountApplied = await Math.round(getCoupon.discountValue);
+            discountApplied =  Math.round(getCoupon.discountValue);
         }
 
         //Save Coupon Redemption Entry
@@ -117,13 +118,13 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         await redemptionRepo.save(newRedemption);
 
         //reduce the total final anount by discount appiled amount
-        const getCart = await cartRepo.findOne({where :{user: {id : userId}}})
-        let getCartFinalAmoount = getCart?.finalAmount ?? 0;
-        getCartFinalAmoount =getCartFinalAmoount- discountApplied;
+        const getorderedAmount = await orderRepo.findOne({where :{user: {id : userId}}})
+        let getOrderFinalAmoount = getorderedAmount?.totalAmount ?? 0;
+        getOrderFinalAmoount =getOrderFinalAmoount- discountApplied;
         const NewTotalAmount =  cartRepo.create({
-            finalAmount :getCartFinalAmoount
+            finalAmount :getOrderFinalAmoount
    })
-        await cartRepo.save(NewTotalAmount);
+        await orderRepo.save(NewTotalAmount);
         //Increase Coupon Redemption Count
         getCoupon.totalRedeemption += 1;
         await couponRepo.save(getCoupon);

@@ -28,11 +28,10 @@ export const addToCart = async (userId: number, productId: number, quantity: num
             getCart.user = getUser;
             getCart.items = [];
             getCart.totalAmount = 0;
-            getCart.discountAmount = 0;
             getCart.finalAmount = 0;
         }
         // Explicitly define cartItem with a union type (cartItem | undefined)
-        let cartItem: CartItem | undefined = getCart.items.find(item => item.product.id === productId);
+        let cartItem: CartItem | undefined = getCart.items.find(item => item.product?.id === productId);
 
         if (cartItem) {
             // If the product already exists in the cart, update quantity and total price
@@ -51,15 +50,15 @@ export const addToCart = async (userId: number, productId: number, quantity: num
             getCart.items.push(cartItem);
         }
 
-
         // Calculate total cart amounts
-        getCart.totalAmount = getCart.items.reduce((sum, item) => sum + (item.totalPrice), 0);
-        getCart.finalAmount = getCart.totalAmount - (getCart.discountAmount ?? 0);
+         getCart.totalAmount = getCart.items.reduce((sum, item) => sum + (item.totalPrice), 0);
+        // getCart.finalAmount = getCart.totalAmount - (getCart.discountAmount ?? 0);
 
-        // Fixed references
-        console.log("Total Amount before saving:", getCart.totalAmount);
-        console.log("Final Amount before saving:", getCart.finalAmount);
+        // // Fixed references
+        // console.log("Total Amount before saving:", getCart.totalAmount);
+        // console.log("Final Amount before saving:", getCart.finalAmount);
 
+        //transaction helps to save in both talble if any one is failed both data in both wiill not saved
         await couponConnection.transaction(async (manager) => {
             await manager.getRepository(CartItem).save(cartItem);
             await manager.getRepository(Cart).save(getCart);

@@ -2,7 +2,6 @@ import { Column, Entity, ManyToOne, Unique } from "typeorm";
 import { commonModel } from "./common.modals";
 
 @Entity("products")
-@Unique(["id"])
 export class Product extends commonModel {
     @Column()
     productName!: string;

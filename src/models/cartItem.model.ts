@@ -11,7 +11,7 @@ export class CartItem extends commonModel{
     @ManyToOne(()=>Product)
     product!:Product;
 
-    @Column({ default: 1 })
+    @Column({ default: 0 })
     quantity!: number;  
 
     @Column("decimal", {precision:10, scale:2})
