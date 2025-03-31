@@ -34,7 +34,7 @@ export class Coupon extends commonModel {
     usageLimit!: number; //how many used can how many times
 
     @Column({default: 0})
-    totalRedeemption!: number; //trasks how many coupn used
+    totalRedeemption!: number; //trasks how many times coupn used
 
     @Column({ default: 1 })
     usagePerUser!: number;

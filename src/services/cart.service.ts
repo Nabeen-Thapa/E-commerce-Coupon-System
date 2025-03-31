@@ -13,9 +13,8 @@ export const addToCart = async (userId: number, productId: number, quantity: num
         console.log("Fetched Product:", getProduct);
 
 
-        if (!getUser || !getProduct) {
-            throw new Error("User or Product not found");
-        }
+        if (!getUser || !getProduct) throw new Error("User or Product not found");
+    
 
         // Check if the user already has a cart
         let getCart = await couponConnection.getRepository(Cart).findOne({

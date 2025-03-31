@@ -7,10 +7,8 @@ export const createUser = async (Name: string, Email: string, password: string) 
         
         // Check if user already exists
         const isUserExist = await userRepository.find({ where: { Email } });
-        if (isUserExist.length > 0) {
-            throw new Error("User already exists");
-        }
-
+        if (isUserExist.length > 0) throw new Error("User already exists");
+        
         // Create a new user instance
         const newUser = userRepository.create({
             Name,

@@ -14,9 +14,7 @@ export const addCouponRestriction = async (couponId: number, allowUserRoles: str
         // Step 1: Get the Coupon entity using the couponId
         const getCoupon = await couponRepo.findOne({ where: { id: couponId } });
 
-        if (!getCoupon) {
-            throw new Error("Coupon not found");
-        }
+        if (!getCoupon)throw new Error("Coupon not found");
 
         const newRestriction = restrictionRepo.create({
             coupon: getCoupon,
@@ -24,8 +22,6 @@ export const addCouponRestriction = async (couponId: number, allowUserRoles: str
             allowPaymentMethods: allowPaymentMethods || null,
             discountOn: discountOn || null,
             discountOnId:discountOnId ||null
-            // excludedProductId: excludedProductId || null,
-            // excludedCategoryIds: excludedCategoryIds || null
         } as Partial<CouponRestriction>);
 
         await restrictionRepo.save(newRestriction);

@@ -15,9 +15,7 @@ export const addCoupon = async ( code:string,
       try {
         const couponRepo = couponConnection.getRepository(Coupon);
         const isExistSameCode = await couponRepo.findOne({where:{code}});
-        if(isExistSameCode){
-            throw new Error("provided coupon is already exist");
-        }
+        if(isExistSameCode) throw new Error("provided coupon is already exist");
         
         const newCoupon = couponRepo.create({
             code,

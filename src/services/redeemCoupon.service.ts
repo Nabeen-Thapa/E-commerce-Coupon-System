@@ -7,6 +7,8 @@ import { User } from "../models/User.model";
 import { Order } from "../models/order.model";
 import { Product } from "../models/product.model";
 import { Cart } from "../models/cart.model";
+import { userType } from "../types/userTypes.type";
+import { DiscountType } from "../types/discount.type";
 
 export const RedeemCoupon = async (userId: number, couponId: number, orderId: number, discountOnId: number) => {
     try {
@@ -22,28 +24,22 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         const getOrder = await orderRepo.findOne({ where: { id: orderId } })
         const getUser = await userRepo.findOne({ where: { id: userId } });
         const getCoupon = await couponRepo.findOne({ where: { id: couponId } });
-        if (!getOrder) {
-            throw new Error("order not fuond")
-        }
-        if (!getUser || !getCoupon) {
-            throw new Error("User or Coupon not found");
-        }
-        if (!restrictionRepo) {
-            throw new Error("coupon redemption not found");
-        }
+
+        if (!getOrder) throw new Error("order not fuond");
+        if (!getUser || !getCoupon) throw new Error("User or Coupon not found");
+        if (!restrictionRepo)  throw new Error("coupon redemption not found");
+        
 
         //check the coupon is for what for prescific product, or category or for all
         const getRestriction = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } });
         let getDiscoutOnId = 0;
         if (getRestriction?.discountOn === "product") {
             const product = await productRepo.findOne({ where: { id: discountOnId } });
-            if (!product) {
-                throw new Error("Product not found for the given discountOnId");
-            }
+            if (!product)  throw new Error("Product not found for the given discountOnId");
+            
             getDiscoutOnId = product.id;
-            if (!getDiscoutOnId) {
-                throw new Error("the coupon discount is not for this porduct");
-            }
+            if (!getDiscoutOnId)   throw new Error("the coupon discount is not for this porduct");
+            
         }
         // let getDiscoutOnId = (getRestriction?.discountOn === "product") ? ((await productRepo.findOne({ where: { id: discountOnId } }))) :" ";
 
@@ -63,48 +59,43 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
 
         //ckeck which user type is allow to use coupon (check by user registerd/created date)
         const getRestrictionUserType = await restrictionRepo.findOne({ where: { coupon: { id: couponId } } })
-        if (getRestrictionUserType?.allowUserRoles === "new user") {
+        if (getRestrictionUserType?.allowUserRoles === userType.NEW_USER) {
             const sevenDaysAgo = subDays(new Date(), 7);
-            if (getUser?.createdAt < sevenDaysAgo) {
-                throw new Error("this coupon is only for new users");
-            }
+            if (getUser?.createdAt < sevenDaysAgo)  throw new Error("this coupon is only for new users");
         }
-        if (getRestrictionUserType?.allowUserRoles === "old user") {
+        if (getRestrictionUserType?.allowUserRoles === userType.OLD_USER) {
             const sevenDaysAgo = subDays(new Date(), 7);
-            if (getUser?.createdAt > sevenDaysAgo) {
-                throw new Error("this coupon is only for old users");
-            }
+            if (getUser?.createdAt > sevenDaysAgo)  throw new Error("this coupon is only for old users");
+            
         }
 
         //  Check if the coupon is active and within the valid date range
         const now = new Date();
-        if (!getCoupon.isActive || now < getCoupon.validFrom || now > getCoupon.validUntil) {
+        if (!getCoupon.isActive || now < getCoupon.validFrom || now > getCoupon.validUntil)
             throw new Error("Coupon is expired or inactive");
-        }
+        
 
         //Check if the user has already redeemed the coupon max times
         const userRedemptions = await redemptionRepo.count({ where: { user: getUser, coupon: getCoupon } });
 
-        if (userRedemptions >= getCoupon.usagePerUser) {
-            throw new Error("Coupon usage limit exceeded for this user");
-        }
-        if (getCoupon.totalRedeemption >= getCoupon.usageLimit) {
-            throw new Error("This coupon has reached its maximum redemption limit");
-        }
+        if (userRedemptions >= getCoupon.usagePerUser) throw new Error("Coupon usage limit exceeded for this user");
+        
+        if (getCoupon.totalRedeemption >= getCoupon.usageLimit) throw new Error("This coupon has reached its maximum redemption limit");
+        
         let orderAmount = getOrder?.totalAmount;
         //Check if the order amount meets the minimum purchase requirement
-        if (getCoupon.minPurchaseAmount && orderAmount < getCoupon.minPurchaseAmount) {
+        if (getCoupon.minPurchaseAmount && orderAmount < getCoupon.minPurchaseAmount) 
             throw new Error(`Minimum order amount should be ${getCoupon.minPurchaseAmount}`);
-        }
+        
 
         //Calculate Discount
         let discountApplied = 0;
-        if (getCoupon.discountType === "percentage") {
+        if (getCoupon.discountType === DiscountType.PERCENTAGE) {
             discountApplied = (orderAmount * getCoupon.discountValue) / 100;
             if (getCoupon.maxDiscountAmount) {
                 discountApplied = Math.min(discountApplied, getCoupon.maxDiscountAmount);
             }
-        } else if (getCoupon.discountType === "fixed") {
+        } else if (getCoupon.discountType === DiscountType.FIXED) {
             discountApplied = Math.round(getCoupon.discountValue);
         }
 
@@ -122,9 +113,8 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
             where: { id: orderId } 
         });
         
-        if (!getorderedAmount) {
-            throw new Error("Order not found for the given userId");
-        }
+        if (!getorderedAmount) throw new Error("Order not found for the given userId");
+        
         
         // Convert decimal to number
         let getOrderFinalAmount = Math.round(Number(getorderedAmount.totalAmount ?? 0));
