@@ -9,10 +9,11 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
     const queryRunner = couponConnection.createQueryRunner();
     queryRunner.connect();
     queryRunner.startTransaction();
+
     try {
         const validationResult = await couponValidation(userId, couponId, orderId, discountOnId);
         if (!validationResult.valid) throw new Error(validationResult.message);
-        
+
         const { coupon, user, order } = validationResult;
         const redemptionRepo = queryRunner.manager.getRepository(CouponRedemption);
         const orderRepo = queryRunner.manager.getRepository(Order);
@@ -57,11 +58,9 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
 
         // Rollback the transaction if any operation fails
         await queryRunner.rollbackTransaction();
-
         throw new Error("Coupon redemption failed");
     } finally {
         // Release the query runner
         await queryRunner.release();
-    }
     }
 };
