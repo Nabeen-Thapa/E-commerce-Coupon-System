@@ -1,8 +1,13 @@
 import { promises } from "dns";
 import { Request, Response } from "express";
 import { createOrder, getUserOrders } from "../services/order.service";
+import { Controller } from "../decorators/controller.decoder";
+import { Route } from "../decorators/route.decoder";
 
-export const createOrderController = async(req:Request, res:Response):Promise<void>=>{
+@Controller("/api/product")
+export class orderController {
+    @Route("POST", "/order/create")
+   async createOrder(req:Request, res:Response):Promise<void>{
     try {
         const { userId} = req.body;
         const result = await createOrder(userId);
@@ -12,7 +17,8 @@ export const createOrderController = async(req:Request, res:Response):Promise<vo
     }
 }
 
-export const viewOrder = async (req:Request, res:Response) => {
+   async viewOrder(req:Request, res:Response) {
+    Route("GET", "/order/view/:id")
     try {
         const userId = Number(req.params.id);
         const orders = await getUserOrders(userId);
@@ -20,4 +26,5 @@ export const viewOrder = async (req:Request, res:Response) => {
     } catch (error) {
         res.status(500).json({ message: error });
     }
+}
 }

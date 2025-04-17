@@ -1,8 +1,14 @@
 import { Request, Response } from "express";
 import { addCouponRestriction } from "../services/couponRestriction.service";
 import { StatusCodes } from "http-status-codes";
+import { Controller } from "../decorators/controller.decoder";
+import { Route } from "../decorators/route.decoder";
 
-export const CouponRestrictionController = async (req: Request, res: Response): Promise<void> => {
+
+@Controller("api/pruduct")
+export class CouponRestrictionController {
+    @Route("POST", "/coupon/restriction")
+   async CouponRestriction(req: Request, res: Response): Promise<void>  {
     const { couponId, allowUserRoles, allowPaymentMethods, discountOn, discountOnId = null } = req.body;
     if (!couponId) {
         res.status(400).json({ message: "Coupon ID is required" });
@@ -17,5 +23,5 @@ export const CouponRestrictionController = async (req: Request, res: Response): 
     } catch (error) {
         console.log("coupon restriction controller error: ", error);
     }
-
+}
 }

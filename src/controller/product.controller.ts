@@ -1,8 +1,13 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { addProduct } from "../services/product.services";
+import { Controller } from "../decorators/controller.decoder";
+import { Route } from "../decorators/route.decoder";
 
-export const addProductController = async(req:Request, res:Response)=>{
+@Controller("/api/product")
+export class productController {
+    @Route("POST", "/add")
+ async addProduct(req:Request, res:Response){
     const{productName, price, isAvailable}= req.body;
     if(!productName || !price || !isAvailable){
       res.status(StatusCodes.BAD_REQUEST).json({message:"all field required"});
@@ -17,4 +22,5 @@ export const addProductController = async(req:Request, res:Response)=>{
     } catch (error) {
         console.log("error in add product controller:", error)
     }
+}
 }

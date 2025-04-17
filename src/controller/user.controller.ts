@@ -1,9 +1,13 @@
 import { Request, Response } from "express";
 import { createUser } from "../services/user.service";
 import { StatusCodes } from "http-status-codes";
+import { Controller } from "../decorators/controller.decoder";
+import { Route } from "../decorators/route.decoder";
 
-
-export const createUserController = async(req:Request, res:Response):Promise<void>=>{
+@Controller("/user")
+export class userController{
+    @Route("POST", "/add")
+ async createUser(req:Request, res:Response):Promise<void>{
     const {Name, Email, password} = req.body;
     try {
       const userAddedResult =  await  createUser(Name, Email, password);
@@ -11,4 +15,5 @@ export const createUserController = async(req:Request, res:Response):Promise<voi
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message: " internal server error"});
     }
+}
 }

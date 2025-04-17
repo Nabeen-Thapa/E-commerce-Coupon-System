@@ -1,8 +1,13 @@
 import { Request, Response } from "express";
 import { RedeemCoupon } from "../services/redeemCoupon.service";
 import { StatusCodes } from "http-status-codes";
+import { Controller } from "../decorators/controller.decoder";
+import { Route } from "../decorators/route.decoder";
 
-export const RedeemCouponController = async (req:Request, res:Response):Promise<void> =>{
+@Controller("/api/product")
+export class redeemController{
+    @Route("POST", "/coupon/redem")
+ async RedeemCoupon(req:Request, res:Response):Promise<void>{
     const { userId, couponId, orderId , discountOnId = null } = req.body;
     try {
         if (!userId || !couponId || !orderId) {
@@ -19,4 +24,5 @@ export const RedeemCouponController = async (req:Request, res:Response):Promise<
         console.log("error in redeemCoupon controller");
         res.status(StatusCodes.BAD_REQUEST).json({ message: error});
     }
+}
 }
