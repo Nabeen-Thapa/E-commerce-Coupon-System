@@ -6,7 +6,7 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("/user")
 export class userController{
-    @Route("POST", "/add")
+    @Route("post", "/add")
  async createUser(req:Request, res:Response):Promise<void>{
     const {Name, Email, password} = req.body;
     try {

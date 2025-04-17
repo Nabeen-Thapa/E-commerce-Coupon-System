@@ -6,7 +6,7 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("/api/product")
 export class productController {
-    @Route("POST", "/add")
+    @Route("post", "/add")
  async addProduct(req:Request, res:Response){
     const{productName, price, isAvailable}= req.body;
     if(!productName || !price || !isAvailable){

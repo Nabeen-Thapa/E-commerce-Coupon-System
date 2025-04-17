@@ -6,7 +6,7 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("/api/product")
 export class orderController {
-    @Route("POST", "/order/create")
+    @Route("post", "/order/create")
    async createOrder(req:Request, res:Response):Promise<void>{
     try {
         const { userId} = req.body;

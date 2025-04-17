@@ -7,7 +7,7 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("api/pruduct")
 export class CouponRestrictionController {
-    @Route("POST", "/coupon/restriction")
+    @Route("post", "/coupon/restriction")
    async CouponRestriction(req: Request, res: Response): Promise<void>  {
     const { couponId, allowUserRoles, allowPaymentMethods, discountOn, discountOnId = null } = req.body;
     if (!couponId) {

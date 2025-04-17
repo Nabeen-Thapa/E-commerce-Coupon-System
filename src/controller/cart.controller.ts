@@ -6,7 +6,7 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("/product/cart") 
 export class cartController {
-    @Route("POST", "/add")
+    @Route("post", "/add")
     async addToCart(req: Request, res: Response): Promise<void> {
         try {
             const { userId, productId, quantity } = req.body;

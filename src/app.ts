@@ -16,10 +16,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
-//app.use("/api",couponRoutes);
-
-//registerRoutes(app, [cartController, CouponController, CouponRestrictionController, orderController, productController, redeemController, userController])
+registerRoutes(app, [cartController, CouponController, CouponRestrictionController, orderController, productController, redeemController, userController])
 const port =process.env.PORT || 3400;
 app.listen(port, ()=>{
     console.log(`server is running in ${port}`);

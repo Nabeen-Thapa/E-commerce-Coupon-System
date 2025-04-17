@@ -5,9 +5,9 @@ import { StatusCodes } from "http-status-codes";
 import { Controller } from "../decorators/controller.decoder";
 import { Route } from "../decorators/route.decoder";
 
-@Controller("product")
+@Controller("/product")
 export class CouponController {
-    @Route("POST", "/coupon/code")
+    @Route("get", "/coupon/code")
     async generateCoupon(req: Request, res: Response) {
         const couponGenerateResult = await generateUniqueCoupon();
         res.json({
@@ -16,7 +16,7 @@ export class CouponController {
         });
     }
 
-    @Route("POST", "/coupon/add")
+    @Route("post", "/coupon/add")
     async addCoupon(req: Request, res: Response): Promise<void> {
         const { code, discountType, discountValue, isActive = true, minPurchaseAmount, maxDiscountAmount, validFrom, validUntil, usageLimit = 1, usagePerUser = 1
         } = req.body;
