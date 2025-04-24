@@ -5,7 +5,8 @@ import { Order } from "../models/order.model";
 import { DiscountType } from "../types/discount.type";
 import { couponValidation } from "../event/couponValidate.subscribe";
 
-export const RedeemCoupon = async (userId: number, couponId: number, orderId: number, discountOnId: number) => {
+export class redeemedServices{
+async RedeemCoupon(userId: number, couponId: number, orderId: number, discountOnId: number) {
     const queryRunner = couponConnection.createQueryRunner();
     queryRunner.connect();
     queryRunner.startTransaction();
@@ -63,4 +64,5 @@ export const RedeemCoupon = async (userId: number, couponId: number, orderId: nu
         // Release the query runner
         await queryRunner.release();
     }
+}
 };

@@ -8,10 +8,9 @@ import { CouponRedemption } from "./CouponRedemption";
 export class Coupon extends commonModel {
     @Column({ unique: true })
     code!: string;
-
     @Column({ type: "enum", enum: DiscountType })
     discountType!: DiscountType;
-
+    
     @Column("decimal", { precision: 10, scale: 2 })
     discountValue!: number;
 

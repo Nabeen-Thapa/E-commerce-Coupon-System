@@ -3,7 +3,8 @@ import { couponConnection } from "../dbconfig/dbConfig";
 import { Coupon } from "../models/coupon.model";
 import { CouponRestriction } from "../models/CouponRestriction.model";
 
-export const addCouponRestriction = async (couponId: number, allowUserRoles: string, allowPaymentMethods: string, discountOn:string, discountOnId : number) => {
+export class couponRestrictionServices{
+ async addCouponRestriction(couponId: number, allowUserRoles: string, allowPaymentMethods: string, discountOn:string, discountOnId : number){
 
     //instade of these use discount on
     // excludedProductId: string, excludedCategoryIds: string
@@ -31,4 +32,5 @@ export const addCouponRestriction = async (couponId: number, allowUserRoles: str
         console.error(error);
         throw new Error("Internal Server Error");
     }
+}
 };

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { addCouponRestriction } from "../services/couponRestriction.service";
 import { StatusCodes } from "http-status-codes";
 import { Controller } from "../decorators/controller.decoder";
 import { Route } from "../decorators/route.decoder";
+import { couponRestrictionServices } from "../services/couponRestriction.service";
 
 
 @Controller("api/pruduct")
@@ -15,7 +15,8 @@ export class CouponRestrictionController {
         return;
     }
     try {
-        const CouponRestrictionResult = await addCouponRestriction(couponId, allowUserRoles, allowPaymentMethods, discountOn, discountOnId);
+        const couponResctrictServices = new couponRestrictionServices();
+        const CouponRestrictionResult = await couponResctrictServices.addCouponRestriction(couponId, allowUserRoles, allowPaymentMethods, discountOn, discountOnId);
         res.status(StatusCodes.ACCEPTED).json({
             message: "coupon restriction added",
             RestrictionDate: CouponRestrictionResult

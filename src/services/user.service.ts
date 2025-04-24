@@ -1,7 +1,8 @@
 import { couponConnection } from "../dbconfig/dbConfig";
 import { User } from "../models/User.model";
 
-export const createUser = async (Name: string, Email: string, password: string) => {
+export class userServices{
+async createUser(Name: string, Email: string, password: string)  {
     try {
         const userRepository = couponConnection.getRepository(User);
         
@@ -29,4 +30,5 @@ export const createUser = async (Name: string, Email: string, password: string) 
         console.error("Error creating user:", error);
         throw error; // Rethrow the error to be caught in the controller
     }
+}
 };

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RedeemCoupon } from "../services/redeemCoupon.service";
+import { redeemedServices } from "../services/redeemCoupon.service";
 import { StatusCodes } from "http-status-codes";
 import { Controller } from "../decorators/controller.decoder";
 import { Route } from "../decorators/route.decoder";
@@ -7,6 +7,8 @@ import { Route } from "../decorators/route.decoder";
 @Controller("/api/product")
 export class redeemController{
     @Route("post", "/coupon/redem")
+
+    private redeemService = new redeemedServices();
  async RedeemCoupon(req:Request, res:Response):Promise<void>{
     const { userId, couponId, orderId , discountOnId = null } = req.body;
     try {
@@ -14,7 +16,7 @@ export class redeemController{
             res.status(400).json({ message: "Invalid request data" });
             return;
         }
-        const RedeemCouponResult = await RedeemCoupon(userId, couponId, orderId, discountOnId);
+        const RedeemCouponResult = await this.redeemService.RedeemCoupon(userId, couponId, orderId, discountOnId);
         res.status(StatusCodes.OK).json({
             message : "redeemed success",
             data: RedeemCouponResult

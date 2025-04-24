@@ -2,7 +2,8 @@ import { couponConnection } from "../dbconfig/dbConfig";
 import { Coupon } from "../models/coupon.model";
 import { DiscountType } from "../types/discount.type";
 
-export const addCoupon = async ( code:string, 
+export class couponServices {
+ async addCoupon ( code:string, 
     discountType :DiscountType, 
     discountValue :number, 
     isActive = true, 
@@ -11,7 +12,7 @@ export const addCoupon = async ( code:string,
     validFrom :Date, 
     validUntil :Date, 
     usageLimit :number, 
-    usagePerUser :number )=>{
+    usagePerUser :number ){
       try {
         const couponRepo = couponConnection.getRepository(Coupon);
         const isExistSameCode = await couponRepo.findOne({where:{code}});
@@ -36,6 +37,6 @@ export const addCoupon = async ( code:string,
         console.log("add coupon service error:", error);
         return error;
       }
-
+    }
     
 }

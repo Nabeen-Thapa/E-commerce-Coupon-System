@@ -1,7 +1,8 @@
 import { couponConnection } from "../dbconfig/dbConfig";
 import { Product } from "../models/product.model";
 
-export const addProduct =async(productName:string, price:number, isAvailable:boolean)=>{
+export class productServiecs {
+ async addProduct(productName:string, price:number, isAvailable:boolean){
     if(!productName || !price || !isAvailable){
      throw new Error("all fields are needed");
     }
@@ -21,4 +22,5 @@ export const addProduct =async(productName:string, price:number, isAvailable:boo
     } catch (error) {
         console.log("error in add product:",error)
     }
+}
 }

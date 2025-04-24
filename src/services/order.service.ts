@@ -4,8 +4,9 @@ import { Order } from "../models/order.model"
 import { User } from "../models/User.model";
 import { Cart } from "../models/cart.model";
 
-
-export const createOrder = async(userId: number)=>{
+//convert this to class
+export class orderServices{
+async createOrder(userId: number){
     try {
         const orderRepo = couponConnection.getRepository(Order);
         const userRepo = couponConnection.getRepository(User);
@@ -25,7 +26,7 @@ export const createOrder = async(userId: number)=>{
     }
 }
 
-export const getUserOrders = async (userId: number) => {
+async getUserOrders(userId: number){
     try {
         const orderRepo = couponConnection.getRepository(Order);
         const orders = await orderRepo.find({ where: { user: { id: userId } }, order: { createdAt: "DESC" } });
@@ -35,4 +36,5 @@ export const getUserOrders = async (userId: number) => {
         console.error("Error fetching orders:", error);
         throw new Error("Internal Server Error");
     }
+}
 };

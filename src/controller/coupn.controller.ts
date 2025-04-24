@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { generateUniqueCoupon } from "../utils/couponCodeGenerator"
-import { addCoupon } from "../services/coupon.services";
+import { generateUniqueCoupon } from "../utils/couponCodeGenerator";
 import { StatusCodes } from "http-status-codes";
 import { Controller } from "../decorators/controller.decoder";
 import { Route } from "../decorators/route.decoder";
+import { couponServices } from "../services/coupon.services";
 
 @Controller("/product")
 export class CouponController {
@@ -25,7 +25,8 @@ export class CouponController {
             return;
         }
         try {
-            const addCouponResult = await addCoupon(code, discountType, discountValue, isActive, minPurchaseAmount, maxDiscountAmount, validFrom, validUntil, usageLimit, usagePerUser);
+            const CouponServices = new couponServices();
+            const addCouponResult = await CouponServices.addCoupon(code, discountType, discountValue, isActive, minPurchaseAmount, maxDiscountAmount, validFrom, validUntil, usageLimit, usagePerUser);
             res.status(StatusCodes.ACCEPTED).json({
                 message: "coupon addded successfully",
                 couponData: addCouponResult

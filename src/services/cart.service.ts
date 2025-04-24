@@ -4,7 +4,8 @@ import { Product } from "../models/product.model";
 import { Cart } from "../models/cart.model";
 import { CartItem } from "../models/cartItem.model";
 
-export const addToCart = async (userId: number, productId: number, quantity: number) => {
+export class cartServices{
+ async addToCart(userId: number, productId: number, quantity: number)  {
     try {
 
         const getUser = await couponConnection.getRepository(User).findOne({ where: { id: userId } });
@@ -58,10 +59,11 @@ export const addToCart = async (userId: number, productId: number, quantity: num
 
         return {
             message: "Product added to cart successfully",
-            cart: getCart
+            cart: getProduct
         };
     } catch (error) {
         console.error(error);
         return Error("Internal Server Error");
     }
+}
 };
