@@ -27,9 +27,8 @@ async RedeemCoupon(userId: number, couponId: number, orderId: number, discountOn
         let discountApplied = 0;
         if (coupon.discountType === DiscountType.PERCENTAGE) {
             discountApplied = (order.totalAmount * coupon.discountValue) / 100;
-            if (coupon.maxDiscountAmount) {
-                discountApplied = Math.min(discountApplied, coupon.maxDiscountAmount);
-            }
+            if (coupon.maxDiscountAmount) discountApplied = Math.min(discountApplied, coupon.maxDiscountAmount);
+    
         } else if (coupon.discountType === DiscountType.FIXED) {
             discountApplied = Math.round(coupon.discountValue);
         }
