@@ -6,9 +6,9 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("/api/product")
 export class redeemController{
+    private redeemService = new redeemedServices();
     @Route("post", "/coupon/redem")
 
-    private redeemService = new redeemedServices();
  async RedeemCoupon(req:Request, res:Response):Promise<void>{
     const { userId, couponId, orderId , discountOnId = null } = req.body;
     try {

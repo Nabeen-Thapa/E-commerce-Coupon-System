@@ -6,9 +6,10 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("/user")
 export class userController{
+    private userService= new userServices();
+    
     @Route("post", "/add")
 
-    private userService= new userServices();
  async createUser(req:Request, res:Response):Promise<void>{
     const {Name, Email, password} = req.body;
     try {

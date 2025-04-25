@@ -12,6 +12,7 @@ function logMiddleware(req: Request, res: Response, next: NextFunction) {
   
 @Controller("/product/cart") 
 export class cartController {
+    private addToCartService = new cartServices();
     @Route("post", "/add")
     @UseMiddleware(logMiddleware)
     async addToCart(req: Request, res: Response): Promise<void> {
@@ -22,8 +23,8 @@ export class cartController {
                 res.status(StatusCodes.BAD_REQUEST).json({ message: "Invalid request data" });
                 return;
             }
-            const addTOcartService = new cartServices();
-            const addToCartResult = await addTOcartService.addToCart(userId, productId, quantity);
+             
+            const addToCartResult = await this.addToCartService.addToCart(userId, productId, quantity);
 
             res.status(StatusCodes.OK).json({message: "product added successfully form controller",
                 data:addToCartResult

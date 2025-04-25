@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+//import express, { Router } from "express";
 //import { addProductController } from "../controller/product.controller";
 //import { addToCartController } from "../controller/cart.controller";
 //import { createUserController } from "../controller/user.controller";
@@ -19,4 +19,4 @@ import express, { Router } from "express";
 //couponRoutes.post("/product/coupon/redem", RedeemCouponController);
 // couponRoutes.post("/product/coupon/restriction", CouponRestrictionController);
 
-export default couponRoutes;
+//export default couponRoutes;

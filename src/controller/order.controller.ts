@@ -6,8 +6,8 @@ import { orderServices } from "../services/order.service";
 
 @Controller("/api/product")
 export class orderController {
+    private  orderService = new orderServices();
     @Route("post", "/order/create")
-  private  orderService = new orderServices();
     async createOrder(req: Request, res: Response): Promise<void> {
         try {
             const { userId } = req.body;

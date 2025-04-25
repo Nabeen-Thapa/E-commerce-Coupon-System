@@ -6,23 +6,30 @@ import { Route } from "../decorators/route.decoder";
 
 @Controller("/api/product")
 export class productController {
-    @Route("post", "/add")
+  private productService = new productServiecs();
 
-    private productService = new productServiecs();
- async addProduct(req:Request, res:Response){
-    const{productName, price, isAvailable}= req.body;
-    if(!productName || !price || !isAvailable){
-      res.status(StatusCodes.BAD_REQUEST).json({message:"all field required"});
-      return ;
-    }
+  @Route("post", "/add")
+  async addProduct(req: Request, res: Response): Promise<void> {
+    const { productName, price, isAvailable } = req.body;
+
     try {
-        const addProductResult = await this.productService.addProduct(productName, price, isAvailable);
-        res.status(StatusCodes.OK).json({message: "product added successfully form controller",
-            data:addProductResult
-        });
-        return;
-    } catch (error) {
-        console.log("error in add product controller:", error)
+      const addProductResult = await this.productService.addProduct(
+        productName,
+        price,
+        isAvailable
+      );
+
+      res.status(StatusCodes.CREATED).json({
+        message: "Product added successfully",
+        data: addProductResult,
+      });
+    } catch (error: any) {
+      console.error("error in add product controller:", error.message);
+
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: error.message || "An unexpected error occurred",
+      });
     }
-}
+  }
 }
