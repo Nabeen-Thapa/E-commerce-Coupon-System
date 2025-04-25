@@ -1,0 +1,106 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "coupon API",
+      "description": "API documentation for coupon",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3400"
+      }
+    ],
+    "paths": {
+      "/api/product/add": {
+        "post": {
+          "summary": "Add a new product",
+          "tags": ["Product"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "productName": {
+                      "type": "string",
+                      "example": "Smart Watch"
+                    },
+                    "price": {
+                      "type": "number",
+                      "example": 4999
+                    },
+                    "isAvailable": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": ["productName", "price", "isAvailable"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Product added successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Product added successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "a1b2c3d4"
+                          },
+                          "productName": {
+                            "type": "string",
+                            "example": "Smart Watch"
+                          },
+                          "price": {
+                            "type": "number",
+                            "example": 4999
+                          },
+                          "isAvailable": {
+                            "type": "boolean",
+                            "example": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Validation failed or bad request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": false
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Validation failed: productName should not be empty"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

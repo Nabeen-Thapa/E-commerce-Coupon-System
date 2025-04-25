@@ -17,7 +17,7 @@ export class productServiecs {
 
             const getProductRepo = couponConnection.getRepository(Product);
             const product = await getProductRepo.find({ where: { productName } });
-            if (product) throw new Error("product with this us already exist");
+            if (product.length > 0) throw new Error("product with this us already exist");
 
             const newProduct = getProductRepo.create({
                 productName,
