@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class ValidateProductData {
+export class ProductDto {
     @IsString()
     @IsNotEmpty()
     productName!: string;

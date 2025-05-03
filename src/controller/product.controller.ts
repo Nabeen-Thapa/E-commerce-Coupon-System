@@ -3,33 +3,24 @@ import { StatusCodes } from "http-status-codes";
 import { productServiecs } from "../services/product.services";
 import { Controller } from "../decorators/controller.decoder";
 import { Route } from "../decorators/route.decoder";
+import { Body, Req, Res } from "../decorators/params/parameter.decorator";
+import { ProductDto } from "../dtos/product.dtos";
+import { sendError, sendSuccess } from "../utils/response.utils";
 
 @Controller("/api/product")
 export class productController {
   private productService = new productServiecs();
 
   @Route("post", "/add")
-  async addProduct(req: Request, res: Response): Promise<void> {
-    const { productName, price, isAvailable } = req.body;
-
+  async addProduct(@Body() productData : ProductDto, @Req() req: Request, @Res() res: Response): Promise<void> {
+    const { productName, price, isAvailable } = productData;
     try {
-      const addProductResult = await this.productService.addProduct(
-        productName,
-        price,
-        isAvailable
-      );
+      const addProductResult = await this.productService.addProduct(productName,price,isAvailable);
 
-      res.status(StatusCodes.CREATED).json({
-        message: "Product added successfully",
-        data: addProductResult,
-      });
+      sendSuccess(res, StatusCodes.CREATED, "Product added successfully",addProductResult)
     } catch (error: any) {
       console.error("error in add product controller:", error.message);
-
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: error.message || "An unexpected error occurred",
-      });
+      sendError(res, StatusCodes.BAD_REQUEST, error)
     }
   }
 }

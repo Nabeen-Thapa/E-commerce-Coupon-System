@@ -1,6 +1,6 @@
 import "reflect-metadata";
 
-export const ROUTE_KEY = Symbol("routes");
+export const ROUTE_KEY = Symbol("paramRoutes");
 
 interface routeDefinition {
     method: string;
